@@ -1,0 +1,22 @@
+RDZO = []
+import csv
+f = open('RDZdf.csv', 'r')
+for row in csv.reader(f):
+    RDZO.append(row)
+f.close()
+import pandas as pd
+#build a dataframe
+RDZD = pd.DataFrame(RDZO, columns=['Ra','Dec','zbest'])
+
+
+##plot scagtter
+import matplotlib.pyplot as plt
+
+plt.scatter(RDZD['Ra'], RDZD['Dec'], s=0.3)
+plt.xlabel("Ra")
+plt.ylabel("Dec")
+plt.grid(True)
+plt.gca().invert_xaxis()
+plt.title("Galaxies AKARI Observed")
+
+plt.show()
