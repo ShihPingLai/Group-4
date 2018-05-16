@@ -13,6 +13,7 @@ f.close()
 RDZD = pd.DataFrame(RDZO, columns=['id','Ra','Dec','zbest', 'groupodd', 'groupeven'])
 
 #輸出多個檔案
+#檔案 1 為紅移 z = 0.1-0.3   檔案5 為 
 for i, g in RDZD.groupby('groupodd'):
      g.to_csv('{}.csv'.format(i.split('/')[0]), index=False)
     
