@@ -1,0 +1,33 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+# read file to a list
+RDZO = []
+import csv
+f = open('RDZcut.csv', 'r')
+for row in csv.reader(f):
+    RDZO.append(row)
+f.close()
+
+#build a dataframe
+
+
+        
+RDZD = pd.DataFrame(RDZO, columns=['id','Ra','Dec','zbest', 'groupodd', 'groupeven'])
+RDZD.zbest = RDZD.zbest.astype(float) #將zbest column 全部變浮點數
+
+#remeber to import
+# I think the bins can use range to  be create rather than type it all
+
+    
+plt.hist(RDZD['zbest'], bins = [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3, 2.5, 2.7, 2.9, 3.1, 3.3, 3.5, 3.7], histtype='bar',alpha=0.75, rwidth=0.8)
+plt.title('Number of Galaxy vs redshift bins')
+plt.xlabel('redshift(z)')
+plt.ylabel('number of galaxy')
+plt.text(2, 17500, 'bin width=0.2(except 0-0.1)')
+
+plt.savefig("C:\\Cosmology Project\\hist.png", dpi=300)
+new_ticks = np.linspace(0.1, 3.5, 18) 
+plt.xticks(new_ticks) 
+plt.xticks(rotation=45)
+plt.show()
