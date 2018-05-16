@@ -1,0 +1,23 @@
+#讀檔案
+RDZO = []
+import csv
+f = open('RDZdf.csv', 'r')
+for row in csv.reader(f):
+    RDZO.append(row)
+f.close()
+###############################
+##建立dataframe
+#注意資料型態
+import pandas as pd
+RDZ = pd.DataFrame(RDZO, columns=['Ra','Dec','zbest'])
+RDZ.zbest = RDZ.zbest.astype(float)#將zbest column 全部變浮點數
+####################
+#將紅移分組 0.1-0.3 一組的
+
+import numpy as np
+RDZODD = pd.cut(RDZ['zbest'], bins = np.array([-0.1, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3, 2.5, 2.7, 2.9, 3.1, 3.3, 3.5, 3.7, np.inf]), labels=[-1, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37])
+RDZ['groupodd'] = RDZODD
+RDZEVEN = pd.cut(RDZ['zbest'], bins = np.array([-0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6,  np.inf]), labels=[-2, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36])
+RDZ['groupeven'] = RDZEVEN
+
+RDZ.to_csv('RDZcut.csv', index=False)
