@@ -1,0 +1,20 @@
+import pandas as pd
+# read file to a list
+RDZO = []
+import csv
+f = open('RDZcut.csv', 'r')
+for row in csv.reader(f):
+    RDZO.append(row)
+f.close()
+
+#build a dataframe
+
+        
+RDZD = pd.DataFrame(RDZO, columns=['id','Ra','Dec','zbest', 'groupodd', 'groupeven'])
+
+#輸出多個檔案
+for i, g in RDZD.groupby('groupodd'):
+     g.to_csv('{}.csv'.format(i.split('/')[0]), index=False)
+    
+for i, g in RDZD.groupby('groupeven'):
+     g.to_csv('{}.csv'.format(i.split('/')[0]), index=False)
