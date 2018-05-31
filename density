@@ -1,0 +1,82 @@
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib as mpl
+
+for u in range(2):
+    RDZO = []
+    import csv
+    f = open('RDZdf.csv', 'r')
+    for row in csv.reader(f):
+        RDZO.append(row)
+    f.close()
+    ###############################
+    ##建立dataframe
+    #注意資料型態
+    import pandas as pd
+    RDZ = pd.DataFrame(RDZO, columns=['Ra','Dec','zbest'])
+    RDZ.zbest = RDZ.zbest.astype(float)#將zbest column 全部變浮點數
+    x = RDZ.Ra.astype(float) #赤經
+    y = RDZ.Dec.astype(float) #赤緯
+    z = RDZ.zbest #紅移
+    ####################
+    ran = len(z)
+    
+    j = 0
+    k = 0
+    n = 0.05 * u + 0.1 
+    m = 0.05 * u + 0.2
+    o = (m + n)/2 
+    from decimal import getcontext, Decimal  
+    p = Decimal(str(o)).quantize(Decimal('0.000'))
+    for i in range(ran):
+        if z[i] >= n and z[i] <= m:
+            j += 1
+    g = [[None] * 3 for l in range(j)]
+    for i in range(ran):
+        if z[i] >= n and z[i] <= m:
+            g[k] = [x[i],y[i],z[i]]
+            k += 1
+
+    RDZ1 = pd.DataFrame(g, columns=['Ra1','Dec1','zbest1'])
+    X = RDZ1.Ra1.astype(float) #赤經
+    Y = RDZ1.Dec1.astype(float) #赤緯
+    Z = RDZ1.zbest1.astype(float) #紅移
+
+
+    # Obtain data from file.
+    m1, m2 = X, Y
+    xmin, xmax = 266, 274
+    ymin, ymax = 65, 68
+
+    # Perform a kernel density estimate (KDE) on the data
+    A, B = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
+    positions = np.vstack([A.ravel(), B.ravel()])
+    values = np.vstack([m1, m2])
+    kernel = stats.gaussian_kde(values)
+    f = np.reshape(kernel(positions).T, A.shape)
+
+    # Define the number that will determine the integration limits
+    x1, y1 = 274, 68
+
+    # Plot the results:
+    import matplotlib.pyplot as plt
+    
+    # Set limits
+    plt.xlim(xmin,xmax)
+    plt.ylim(ymin,ymax)
+    
+    # KDE density plot
+    plt.imshow(np.rot90(f), cmap = 'nipy_spectral' ,extent=[xmin, xmax, ymin, ymax])
+    plt.gca().invert_xaxis() 
+    plt.colorbar()
+    plt.clim(0.00, 0.1);
+    
+    fig = plt.gcf()
+    fig.set_size_inches(20.5, 10.5)
+    
+    plt.xlabel('Right ascension')
+    plt.ylabel('Declination')
+    plt.title("Redshift =" + str(p), fontsize=20)
+    plt.show()
