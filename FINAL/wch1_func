@@ -1,0 +1,96 @@
+def wch1():
+    import pandas as pd
+    import math as m
+    import csv
+    import numpy
+    import glob 
+    import matplotlib.pyplot as plt
+    import os
+    path =r'C:\findclusters\chh1' # 檔案們的路徑
+
+    filenames = glob.glob(path + "/*.csv")
+
+
+    global P
+    for file_ in filenames:
+        s = file_[21:23]
+        s = s.strip('.')
+        print (s)
+        s = float(s)
+        i = open(file_,'r')
+
+        B = []
+
+        for row in csv.reader(i):
+            B.append(row)
+
+
+
+        B=numpy.delete(B,0,axis=0)
+
+        #build a dataframe
+
+        B1 = pd.DataFrame(B, columns=['id','Ra','Dec','zbest', 'groupodd', 'groupeven'])
+        #因為輸出為字串，要做數據處理要將之轉換為浮點數
+
+
+        Raf = pd.to_numeric(B1.Ra, errors = 'ingnore')
+
+        Decf = pd.to_numeric(B1.Dec, errors = 'ingnore')
+
+        B1.insert(1, 'Raf', Raf)
+
+        B1.insert(2, 'Decf', Decf)
+
+        #將源字串刪除
+        del B1['Ra']
+
+        del B1['Dec']
+
+        #以  Ra 270 當作中心  DEC  66.5  當作中心
+        #先算與中心距離多少度
+
+        Rax = B1.Raf-270.0
+
+        Decy = B1.Decf-66.5
+
+        B1['Rax'] = Rax
+
+        B1['Decy'] = Decy
+
+        import math
+
+        ##如同EXCEl一樣，做整個直行的公式計算將度換弧度
+        Decrad = B1.Decf*2*math.pi/360
+
+        B1['Decrad'] = Decrad
+
+        cosDec = []
+
+        #因為球座標關係，要乘COS  建議自己想一下，不懂再問我
+        for L in Decrad:
+            cosDec.append(math.cos(L))
+
+        cosDec = pd.DataFrame(cosDec, columns=['cosDec'])
+
+        B1['cosDec'] = cosDec
+        P = s/10 + 0.1
+        s = int(s)
+
+        zbest=m.pow(P+1, 2)
+
+        s = str(s)
+
+        #終於要換距離了  在z(紅移) = 0.2 那邊「視角的距離」  一角秒等於 3.171 千角秒差(kpc/")  所以  一度等於 3.6*3.171 百萬角秒差(Mpc/degree) 就是 R = r*d theta(弧長計算)
+        B1['Rad'] = ((299792.458/73.2)*((zbest-1)/(zbest+1))* B1.cosDec)*(B1.Rax)*2*math.pi/360
+        B1['Decd'] = ((299792.458/73.2)*((zbest-1)/(zbest+1)))*(B1.Decy)*2*math.pi/360
+
+
+        #
+
+
+
+
+
+        B1.to_csv('C:\\findclusters\\wch1\\distance_bin'+s+'.csv', index = False, header = False)
+    os.remove('C:\\findclusters\\wch1\\distance_bin0.csv')
