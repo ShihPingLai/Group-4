@@ -89,7 +89,13 @@
 1.樸取圖片
 2.製作動畫
 
-
+##########################################################################
+#執行須知
+1. 下載雲端連結中的壓縮檔findclusters
+2. 解壓縮至C槽，此時檔案路徑為C:\\findclusters
+3. 在C:\\findclusters之下，有rawdata檔案RDZdf.csv，以及主程式final.ipynb，子程式chh1_func.py、wch1_func.py等...
+4. 在C:\\findclusters之下，有資料夾chh、chh1、wch1等....
+5. 在終端機或Jupyter上執行final.ipynb
 
 
 
