@@ -1,0 +1,14 @@
+def lzs():
+    from PIL import Image
+    im=Image.open("C:\\findclusters\\ccl\\1.png")
+    images=[]
+    images.append(Image.open('C:\\findclusters\\ccl\\1.png'))
+    import numpy as np
+    a = np.arange(0,199,1)
+    #print(a)
+    for i in a:
+        name='C:\\findclusters\\ccl\\{}.png'.format(i)
+        images.append(Image.open(name))
+
+
+    im.save('C:\\findclusters\\lzs\\gif.gif', save_all=True, append_images=images,loop=10,duration=10,comment=b"aaabb")
