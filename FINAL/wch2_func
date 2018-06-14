@@ -1,0 +1,94 @@
+def wch2():
+    import pandas as pd
+    import math
+    import csv
+    import numpy as np
+    import glob 
+    path =r'C:\findclusters\cyz2' # 檔案們的路徑
+
+    filenames = glob.glob(path + "/*.csv")
+
+
+
+    for file_ in filenames:
+        s = file_[21:]
+        s = s.strip('.')
+        print (s)
+
+        PPP = open(file_,'r')
+        BB = []
+        Bs= []
+        B1 = []
+        for row in csv.reader(PPP):
+            Bs.append(row)
+
+
+        for i in Bs:
+            for j in i:
+                B1.append(float(j))
+        BB = [B1[i:i+64] for i in range(0, len(B1), 64)]
+
+
+
+        Bmat = np.mat(BB)
+
+        Bmat.astype(np.int)
+
+        nonzero = np.nonzero(Bmat)
+
+    #現在nonzero 矩陣就顯示著在那個2D histogram 中，那些格子>9
+    #將位置換回 赤經赤緯
+    #這裡要注意資料型態   list, float, numpy array, string
+
+
+
+
+        import math as m
+        import operator as o
+        Mx=[]
+        My=[]
+    #nonzero[0] is Ra bin
+        for i in nonzero[0]:
+            Mx.append(float(i))
+     #nonzero[1] is Dec bin   
+        for i in nonzero[1]:
+            My.append(float(i))
+
+
+
+
+    #Mx is float
+    #以下將原本矩陣的格子座標(ij)換回  實際角度
+        xd = []
+        yd = []
+        for i in Mx:
+            xd.append((i-32)*0.5)
+        for i in My:
+            yd.append((i-32)*0.5)
+    #xd is Mpc to the center
+
+
+        Ra = []
+        Dec = []
+    #oocosDec = one over cos Dec
+        oocosDec= []
+    #RaN為沒有餘弦修正的Ra
+        RaN = []
+
+    #記得補回  Ra 270  Dec 66.5
+        for i in yd:
+            Dec.append(i/12.898832+66.5)
+        for i in Dec:
+            oocosDec.append(1/m.cos(i*2*m.pi/360))
+
+
+        for i in xd:    
+            RaN.append(i/12.898832)
+
+    #將RaN  and oocosDec  一對一元素相乘
+        Ra = [a*b+270 for a, b in zip(RaN, oocosDec)]
+        LK=[]
+        for each in zip(Ra, Dec):
+            LK.append(each)
+
+        np.savetxt('C:\\findclusters\\wch2\\Clusters in zbin'+s+'row.csv', LK, delimiter = ',')
