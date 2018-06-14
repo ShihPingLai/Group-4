@@ -1,0 +1,35 @@
+from chh1_func import chh1
+
+chh1()
+
+from chh2_func import chh2
+
+chh2()
+
+from wch1_func import wch1
+
+wch1()
+
+from cyz2_func import cyz
+
+cyz()
+
+from wch2_func import wch2
+
+wch2()
+
+from wch3_func import wch3
+
+wch3()
+
+from wch4_func import wch4
+
+wch4()
+
+from ccl_func import ccl
+
+ccl()
+
+from lzs_func import lzs
+
+lzs()
