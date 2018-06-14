@@ -96,6 +96,7 @@
 3. 在C:\\findclusters之下，有rawdata檔案RDZdf.csv，以及主程式final.ipynb，子程式chh1_func.py、wch1_func.py等...
 4. 在C:\\findclusters之下，有資料夾chh、chh1、wch1等....
 5. 在終端機或Jupyter上執行final.ipynb
+6.成果之動畫將呈現在 在C:\\findclusters\\lzs 中之 gif  以及final.csv在C:\\findclusters之下
 
 
 
