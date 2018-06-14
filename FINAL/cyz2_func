@@ -1,0 +1,151 @@
+def cyz():
+    # 讀承翰做好的37個Rad Decd檔
+    import pandas as pd
+    import glob 
+    import csv
+    import os
+
+    path =r'D:\findclusters\wch1' # 檔案們的路徑
+
+    filenames = glob.glob(path + "/*.csv")
+
+    #print(filenames)
+
+    for file_ in filenames:
+        s = file_[21:]
+        print (s)
+        i = open(file_,'r')
+
+        B = []
+
+        for row in csv.reader(i):
+            B.append(row)
+            #print(B[:10])
+
+        #建立dataframe
+        B1 = pd.DataFrame(B, columns=['id','Raf','Decf','zbest', 'groupodd', 'groupeven','Rax', 'Decy', 'Decrad', 'cosDec', 'Rad', 'Decd'])
+        #print(B1[:10])       
+
+        Rad = B1['Rad']
+        #print(Rad[:10])
+        Decd = B1['Decd']
+        #print(Decd[:10])
+
+        Rad = B1['Rad'].values.tolist()
+        del Rad[0]
+        del Rad[0]
+
+        for index, item in enumerate(Rad):
+            Rad[index] = float(item)
+        #print(Rad[:10])
+        #print (len(Rad))
+
+        import numpy as np
+        Rad = np.array(Rad)
+        #print(Rad[:10])
+
+        Decd = B1['Decd'].values.tolist()
+        del Decd[0]
+        del Decd[0]
+
+        for index, item in enumerate(Decd):
+            Decd[index] = float(item)
+        #print(Decd[:10])
+        #print (len(Decd))
+
+        Decd = np.array(Decd)
+        #print(Decd[:10])
+
+        import matplotlib.pyplot as plt
+        plt.rcParams.update({'figure.max_open_warning': 0})
+        x = Rad
+        y = Decd
+
+        #2D hist，匯出密度矩陣 64*64
+        a=(max(Rad)-min(Rad))/64
+        b=(max(Decd)-min(Decd))/64
+
+        fig, ax = plt.subplots()
+        ax.set_aspect("equal")
+        hist, xbins, ybins, im = ax.hist2d(x,y, bins=64)
+
+        for i in range(len(ybins)-1):
+            for j in range(len(xbins)-1):
+                ax.text(xbins[j]+a,ybins[i]+b, hist[i,j], 
+                        color="w", ha="center", va="center", fontweight="bold")
+
+
+        #print(hist)
+
+        np.savetxt('C:\\findclusters\\cyz1\\bincount'+s, hist, delimiter=',')
+
+
+
+
+
+    ###成一維數據
+        bincount = []
+        for i in hist:
+            for j in i:
+                bincount.append(j)
+
+
+    ###保留0 做散布圖
+        a = np.array(bincount)
+        #plt.hist(a, bins = range(18), histtype='bar', align='left',alpha=0.75, rwidth=0.8)
+        #plt.title('bin count')
+        #plt.xlabel('galaxy number in a bin')
+        #plt.ylabel('bin amount')
+        #new_ticks = np.linspace(0, 18, 19) 
+        #plt.xticks(list(new_ticks))
+
+        #plt.show()
+
+
+    ###篩出0的部分 做散布圖
+        b = []
+        for i in bincount:
+            if i != 0:
+                b.append(i)      
+        b1 = np.array(b)
+
+        #plt.hist(a, bins = range(18), histtype='bar', align='left',alpha=0.75, rwidth=0.8)
+        #plt.title('bin count')
+        #plt.xlabel('galaxy number in a bin')
+        #plt.ylabel('bin amount')
+        #new_ticks = np.linspace(0, 18, 19) 
+        #plt.xticks(list(new_ticks))
+
+        #plt.show()
+
+        #中位數
+        m = np.median(b1)
+        #print(m)
+
+        #標準差
+        std = np.std(b1)
+        #print(s)
+
+        #三個標準差
+        sthr = 3*std
+        #print(sthr)
+
+        #中位數+三個標準差
+        d = int(m+sthr)+1
+        #print(d)
+
+        #將1D list換回 64*64矩陣
+        B = []
+        for i in a:
+            if i > d-1:
+                B.append(1.0)
+            else:
+                B.append(0.0)
+        #print(B[100:200])
+        #print(len(B))
+
+        Bmat = np.array(B).reshape(64,64)
+        #print(Bmat)
+
+        #存成匯出37張0,1密度矩陣 64*64
+        np.savetxt('C:\\findclusters\\cyz2\\Bmat_test'+s, Bmat, delimiter=',')
