@@ -1,0 +1,17 @@
+def wch4():
+    import pandas as pd
+    import glob 
+    import csv
+    import numpy
+
+    path =r'C:\findclusters\wch3' # 檔案們的路徑
+
+    filenames = glob.glob(path + "/*.csv")
+    B = []
+    for x in filenames:
+        i = open(x,'r')
+        for row in csv.reader(i):
+            B.append(row)
+    B1 = pd.DataFrame(B)
+
+    B1.to_csv('C:\\findclusters\\final.csv', index = False, header= False)
